@@ -7,19 +7,30 @@
     "icon": "./assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
+    "newArchEnabled": true,
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSAllowsArbitraryLoads": true,
+        "NSExceptionDomains": {
+          "64.23.228.143": {
+            "NSExceptionAllowsInsecureHTTPLoads": true,
+            "NSIncludesSubdomains": true
+          }
+        }
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "networkSecurityConfig": "./network_security_config.xml"
     },
     "web": {
       "bundler": "metro",
