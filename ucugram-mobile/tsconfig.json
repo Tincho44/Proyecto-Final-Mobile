@@ -13,5 +13,5 @@
     "**/*.tsx",
     ".expo/types/**/*.ts",
     "expo-env.d.ts"
-  ]
+, "app/(tabs)/[userId].jsx", "hooks/useApi.jsx", "services/UserService.jsx", "app/_layout.jsx"  ]
 }
