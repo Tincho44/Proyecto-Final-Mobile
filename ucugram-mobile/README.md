@@ -1,50 +1,122 @@
-# Welcome to your Expo app 👋
+# UCUGram DWM 2024
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+## Descripción del Proyecto
+Esta es la versión mobile del proyecto final de DWM 2024.
 
-## Get started
+## Tecnologías Utilizadas
 
-1. Install dependencies
+### Core
+- **React Native**: Framework principal para el desarrollo móvil multiplataforma
+- **Expo**: Plataforma para simplificar el desarrollo de React Native
+- **TypeScript**: Superset de JavaScript que añade tipado estático
 
-   ```bash
-   npm install
-   ```
+### Navegación y Routing
+- **Expo Router**: Sistema de navegación basado en archivos, similar a Next.js
+- **React Navigation**: Para la navegación entre pantallas y manejo de tabs
 
-2. Start the app
+### Estado y Networking
+- **Context API**: Para el manejo de estado global (autenticación)
+- **Axios**: Cliente HTTP para las peticiones al backend
 
-   ```bash
-    npx expo start
-   ```
+### Almacenamiento
+- **AsyncStorage**: Para persistencia de datos local (tokens, preferencias)
 
-In the output, you'll find options to open the app in a
+## Configuración y Ejecución
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+### Prerrequisitos
+- Node.js (versión 14 o superior)
+- npm o yarn
+- Expo CLI
+- iOS Simulator (Mac) o Android Studio (Windows/Mac/Linux)
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
+### Instalación
 ```bash
-npm run reset-project
+# Clonar el repositorio
+git clone [url-del-repositorio]
+
+# Instalar dependencias
+npm install
+
+# Instalar Expo CLI globalmente
+npm install -g expo-cli
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+### Ejecución
+```bash
+# Iniciar el proyecto
+npx expo start
 
-## Learn more
+# Para iOS
+npx expo run:ios
 
-To learn more about developing your project with Expo, look at the following resources:
+# Para Android
+npx expo run:android
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+## Estructura del Proyecto
 
-## Join the community
+```
+src/
+├── app/                 # Rutas y navegación (Expo Router)
+│   ├── (auth)/         # Rutas de autenticación
+│   └── (tabs)/         # Rutas principales de la app
+├── components/         # Componentes reutilizables
+├── contexts/          # Contextos de React (AuthContext, etc.)
+├── services/         # Servicios para API calls
+├── hooks/            # Hooks personalizados
+├── utils/            # Utilidades y helpers
+├── types/            # Definiciones de TypeScript
+└── constants/        # Constantes y configuración
+```
 
-Join our community of developers creating universal apps.
+### Decisiones de Arquitectura
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+1. **Expo Router**: 
+   - Elegido por su sistema de navegación basado en archivos
+   - Facilita la implementación de rutas protegidas
+   - Mejor integración con Expo
+
+2. **Estructura por Funcionalidad**:
+   - Organización basada en características para mejor escalabilidad
+   - Separación clara entre componentes de UI y lógica de negocio
+
+3. **Context API vs Redux**:
+   - Context API elegido por su simplicidad y suficiencia para el alcance actual
+   - Menor curva de aprendizaje y configuración más sencilla
+
+4. **Servicios Centralizados**:
+   - Abstracción de llamadas API en servicios
+   - Mejor mantenibilidad y reutilización de código
+
+## Librerías Principales y Justificación
+
+1. **Expo**
+   - Simplifica el desarrollo y despliegue
+   - Proporciona acceso a APIs nativas comunes
+   - Facilita el testing en dispositivos reales
+
+2. **TypeScript**
+   - Mejora la detección temprana de errores
+   - Proporciona mejor documentación inline
+   - Facilita el mantenimiento a largo plazo
+
+3. **Axios**
+   - Interfaz más intuitiva que fetch
+   - Mejor manejo de errores
+   - Interceptores para manejo global de requests
+
+4. **AsyncStorage**
+   - Solución de almacenamiento persistente recomendada para React Native
+   - API simple y consistente
+   - Buen rendimiento para datos pequeños
+
+5. **Expo Router**
+   - Sistema de navegación moderno y declarativo
+   - Mejor rendimiento que React Navigation standalone
+   - Soporte nativo para deep linking
+
+## Próximos Pasos y Mejoras Planificadas
+- Implementación de caché de imágenes
+- Optimización de rendimiento en listados largos
+- Implementación de pruebas automatizadas
+- Soporte offline
