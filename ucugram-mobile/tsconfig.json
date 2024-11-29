@@ -12,7 +12,11 @@
     "**/*.ts",
     "**/*.tsx",
     ".expo/types/**/*.ts",
-    "expo-env.d.ts"
-, "utils/api.js"  ]
-, "app/(tabs)/[userId].jsx", "hooks/useApi.jsx", "services/UserService.jsx", "app/_layout.jsx"  ]
+    "expo-env.d.ts",
+    "utils/api.js",
+    "app/(tabs)/[userId].jsx",
+    "hooks/useApi.jsx",
+    "services/UserService.jsx",
+    "app/_layout.jsx"
+, "app/+not-found.jsx", "hooks/useAuth.ls", "context/AuthContext.jsx", "app/+html.jsx", "services/feedService.jsx", "services/AuthService.jsx", "app/(tabs)/feed.jsx"  ]
 }

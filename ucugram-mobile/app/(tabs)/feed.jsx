@@ -22,7 +22,6 @@ export default function Feed() {
    setLoading(true);
    try {
       const response = await getFeed();
-      console.log(response);
       setPosts(response.data);
       setLoading(false);
       setRefreshing(false);
