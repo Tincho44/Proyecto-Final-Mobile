@@ -1,106 +1,93 @@
-// screens/PostImage.tsx
-import React, { useContext, useState } from 'react';
-import { View, Text, Button, Image, TextInput, StyleSheet, Alert } from 'react-native';
-import * as ImagePicker from 'expo-image-picker';
-import { PostContext, PostProvider } from '../../context/PostContext';
+import React, { useState, useContext } from "react";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from "react-native";
+import * as ImagePicker from "expo-image-picker";
+import { useToast } from "react-native-toast-notifications"; 
+import usePostService from '../../services/PostService';
 
-const PostImage = () => {
-    const { uploadNewPost } = useContext(PostContext);
-  const [image, setImage] = useState(null);
-  const [caption, setCaption] = useState('');
-  const [loading, setLoading] = useState(false);
+const CreatePostPage = () => {
+  const [imageUri, setImageUri] = useState(null);
+  const [caption, setCaption] = useState("");
+  const { uploadPost } = usePostService()
+  const toast = useToast();
 
-  // Solicitar permisos para acceder a la galería y la cámara
-  const requestPermissions = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      alert('Lo siento, necesitamos permisos para acceder a la galería.');
-    }
-  };
-
-  const pickImage = async () => {
+  const handlePickImage = async () => {
     try {
-      await requestPermissions();
-      let result = await ImagePicker.launchImageLibraryAsync({
+      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!permissionResult.granted) {
+        Alert.alert("Permiso denegado", "Se necesita acceso a la galería para seleccionar una imagen.");
+        return;
+      }
+
+      const result = await ImagePicker.launchImageLibraryAsync({
         mediaTypes: ImagePicker.MediaTypeOptions.Images,
         allowsEditing: true,
-        aspect: [4, 3],
         quality: 1,
       });
 
       if (!result.canceled) {
-        setImage(result.assets[0].uri);
+        setImageUri(result.assets[0].uri);
       }
     } catch (error) {
-      console.error('Error al seleccionar la imagen', error);
+      console.error("Error al seleccionar imagen:", error);
     }
   };
 
-  const takePhoto = async () => {
-    try {
-      await requestPermissions();
-      let result = await ImagePicker.launchCameraAsync({
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 1,
-      });
-
-      if (!result.canceled) {
-        setImage(result.assets[0].uri);
-      }
-    } catch (error) {
-      console.error('Error al tomar la foto', error);
-    }
-  };
-
-  // Función para subir la imagen
-  const uploadImage = async () => {
-    if (!image) {
-      Alert.alert('Error', 'Por favor selecciona una imagen');
+  const handleSubmit = async () => {
+    if (!imageUri) {
       return;
     }
 
-    const file = {
-      uri: image,
-      type: 'image/jpeg',
-      name: 'photo.jpg',
-    };
-
-    setLoading(true);
     try {
-      const response = await uploadNewPost(caption, file); // Usar la función del contexto para subir la publicación
-      setLoading(false);
-      Alert.alert('Éxito', 'La publicación se ha subido exitosamente');
+      const data = new FormData();
+      data.append("file", imageUri);
+      data.append("upload_preset", "unsigned_preset"); // Cambiar por tu preset de Cloudinary
+
+      const cloudinaryResponse = await fetch("https://api.cloudinary.com/v1_1/ddukhiy9y/image/upload", {
+        method: "POST",
+        body: data,
+      });
+
+      const cloudinaryResult = await cloudinaryResponse.json();
+
+      if (cloudinaryResponse.ok && cloudinaryResult.secure_url) {
+        const imageUrl = cloudinaryResult.secure_url;
+        await uploadPost(caption, imageUrl); 
+        setImageUri(null);
+        setCaption("");
+      } else {
+        console.error("Cloudinary upload error:", cloudinaryResult);
+      }
     } catch (error) {
-      setLoading(false);
-      console.error('Error al subir la imagen', error);
-      Alert.alert('Error', 'Hubo un problema al subir la imagen');
+      console.error("Error al crear la publicación:", error);
     }
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Subir una nueva publicación</Text>
+      <Text style={styles.title}>Crear Nueva Publicación</Text>
 
-      {/* Mostrar la imagen seleccionada */}
-      {image && <Image source={{ uri: image }} style={styles.imagePreview} />}
+      {/* Botón para seleccionar imagen */}
+      <TouchableOpacity style={styles.imagePickerButton} onPress={handlePickImage}>
+        <Text style={styles.imagePickerText}>
+          {imageUri ? "Cambiar Imagen" : "Seleccionar Imagen"}
+        </Text>
+      </TouchableOpacity>
 
-      {/* Botones para seleccionar imagen o tomar foto */}
-      <Button title="Seleccionar Imagen" onPress={pickImage} />
-      <Button title="Tomar Foto" onPress={takePhoto} />
+      {imageUri && <Image source={{ uri: imageUri }} style={styles.imagePreview} />}
 
-      {/* Campo para ingresar el caption */}
+      {/* Campo de texto para el caption */}
       <TextInput
         style={styles.input}
-        placeholder="Escribe una descripción..."
+        placeholder="Escribe un caption..."
         value={caption}
-        onChangeText={setCaption}
+        onChangeText={(text) => setCaption(text)}
+        multiline
       />
 
-      {/* Botón para subir la imagen */}
-      <Button title="Subir Publicación" onPress={uploadImage} disabled={loading} />
-
-      {loading && <Text>Subiendo...</Text>}
+      {/* Botón para publicar */}
+      <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
+        <Text style={styles.submitButtonText}>Publicar</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -109,26 +96,52 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
-    alignItems: 'center',
+    backgroundColor: "#fff",
   },
   title: {
     fontSize: 24,
+    fontWeight: "bold",
     marginBottom: 20,
+    textAlign: "center",
+  },
+  imagePickerButton: {
+    backgroundColor: "#007bff",
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+    marginBottom: 15,
+  },
+  imagePickerText: {
+    color: "#fff",
+    fontSize: 16,
   },
   imagePreview: {
-    width: 200,
+    width: "100%",
     height: 200,
     borderRadius: 10,
-    marginBottom: 20,
+    marginBottom: 15,
   },
   input: {
-    width: '100%',
-    padding: 10,
+    borderColor: "#ccc",
     borderWidth: 1,
-    borderColor: '#ccc',
     borderRadius: 5,
-    marginBottom: 20,
+    padding: 10,
+    fontSize: 16,
+    marginBottom: 15,
+    minHeight: 80,
+    textAlignVertical: "top",
+  },
+  submitButton: {
+    backgroundColor: "#28a745",
+    padding: 10,
+    borderRadius: 5,
+    alignItems: "center",
+  },
+  submitButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
 });
 
-export default PostImage;
+export default CreatePostPage;
