@@ -9,6 +9,7 @@ export default function TabLayout() {
   const colorScheme = useColorScheme();
 
   return (
+    
     <Tabs
       screenOptions={{
         tabBarActiveTintColor: Colors[colorScheme ?? "light"].tint,
@@ -37,6 +38,12 @@ export default function TabLayout() {
           tabBarIcon: ({ color, focused }) => (
             <TabBarIcon name={focused ? "camera" : "camera-outline"} color={color} />
           ),
+        }}
+      />
+      <Tabs.Screen
+        name="[userId]"
+        options={{
+          title: "Profile",
         }}
       />
     </Tabs>

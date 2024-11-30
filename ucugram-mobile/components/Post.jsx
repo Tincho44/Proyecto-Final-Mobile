@@ -4,6 +4,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { PostContext } from "../context/PostContext"; // Asegúrate de importar el contexto correctamente}
 import { AuthContext } from "@/context/AuthContext";
 import CommentsModal from './CommentsModal'
+import { useRouter } from "expo-router";
 
 export default function Post({ post }) {
   const [showAllComments, setShowAllComments] = useState(false);
@@ -54,23 +55,32 @@ export default function Post({ post }) {
   setPostLikeado(!postLikeado); // Cambiar el estado de like
 };
 
+const router = useRouter(); // Hook para la navegación
+
+const handleNavigateToUser = () => {
+  // Navegar a la ruta dinámica pasando el ID del usuario
+  router.push(`/${post.user._id}`);
+};
 
 
 return (
   <View style={styles.container}>
-    {/* Header del post */}
-    <View style={styles.header}>
-      <View style={styles.userInfo}>
-        <Image
-          source={{ uri: post.user.profilePicture }}
-          style={styles.avatar}
-        />
-        <Text style={styles.username}>{post.user.username}</Text>
+      {/* Header del post */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={handleNavigateToUser}>
+          <View style={styles.userInfo}>
+            <Image
+              source={{ uri: post.user.profilePicture }}
+              style={styles.avatar}
+            />
+            <Text style={styles.username}>{post.user.username}</Text>
+          </View>
+        </TouchableOpacity>
+        <TouchableOpacity>
+          <Ionicons name="ellipsis-horizontal" size={24} color="black" />
+        </TouchableOpacity>
       </View>
-      <TouchableOpacity>
-        <Ionicons name="ellipsis-horizontal" size={24} color="black" />
-      </TouchableOpacity>
-    </View>
+
 
     {/* Imagen del post */}
     <Image
