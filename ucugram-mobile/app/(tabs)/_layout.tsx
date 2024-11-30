@@ -1,6 +1,6 @@
+// TabLayout.tsx
 import { Tabs } from "expo-router";
 import React from "react";
-
 import { TabBarIcon } from "@/components/navigation/TabBarIcon";
 import { Colors } from "@/constants/Colors";
 import { useColorScheme } from "@/hooks/useColorScheme";
@@ -26,17 +26,17 @@ export default function TabLayout() {
         options={{
           title: "Feed",
           tabBarIcon: ({ color, focused }) => (
-            <TabBarIcon
-              name={focused ? "home" : "home-outline"}
-              color={color}
-            />
+            <TabBarIcon name={focused ? "home" : "home-outline"} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="[userId]"
+        name="PostImagen"
         options={{
-          title: "Profile",
+          title: "Post Image",
+          tabBarIcon: ({ color, focused }) => (
+            <TabBarIcon name={focused ? "camera" : "camera-outline"} color={color} />
+          ),
         }}
       />
     </Tabs>
