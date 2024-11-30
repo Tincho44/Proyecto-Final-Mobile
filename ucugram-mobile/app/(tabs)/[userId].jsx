@@ -18,7 +18,10 @@ const ProfileScreen = () => {
   const [isFriend, setIsFriend] = useState(false); 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const isOwnProfile = userId == "undefined" || userId || userId === userLog._id; 
+  if (!userLog) {
+    return <ActivityIndicator size="large" style={styles.loadingIndicator} />;
+  }
+  const isOwnProfile = userId == "undefined" || userId == undefined || userId === userLog._id; 
 
   const fetchUserData = async () => {
     setLoading(true);
