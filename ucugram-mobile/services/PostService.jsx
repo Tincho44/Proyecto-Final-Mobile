@@ -8,12 +8,13 @@ const usePostService = () => {
     return response;
   };
 
-  const uploadPost = async (caption, file) => {
+  const uploadPost = async (caption, url) => {
+    console.log(url)
     const formData = new FormData();
-    formData.append("caption", caption);
-    formData.append("image", file);
-    const response = await doRequest("posts/upload", "POST", formData, true);
-    
+    formData.append('caption', caption);
+    formData.append('image', url);
+
+    const response = await doRequest("posts/upload", "POST", formData, true, 'multipart/form-data');
     return response;
   };
 

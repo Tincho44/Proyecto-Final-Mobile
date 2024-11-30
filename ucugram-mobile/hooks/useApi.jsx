@@ -22,11 +22,9 @@ const useApi = () => {
       method,
       headers,
     }
-
     if (data) {
       payload.data = data
     }
-
     const response = await axios(payload);
     return response;
   }, []);
