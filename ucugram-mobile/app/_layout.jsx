@@ -8,6 +8,7 @@ import 'react-native-reanimated';
 import { useAuth } from '@/hooks/useAuth';
 import { useColorScheme } from '@/hooks/useColorScheme';
 import { AuthProvider } from '@/context/AuthContext';
+import {PostProvider} from '@/context/PostContext';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -30,7 +31,6 @@ function RootLayoutNav() {
   if (loading) {
     return null;
   }
-
   return <Stack />;
 }
 
@@ -52,9 +52,11 @@ export default function RootLayout() {
 
   return (
     <AuthProvider>
+      <PostProvider>
       <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
         <RootLayoutNav />
       </ThemeProvider>
+      </PostProvider>
     </AuthProvider>
   );
 }

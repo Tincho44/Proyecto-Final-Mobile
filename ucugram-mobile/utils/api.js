@@ -33,7 +33,7 @@ const useApi = () => {
 
       try {
         const response = await axios({
-          url: `http://64.23.228.143:3001/api/${url}`,
+          url: `http://192.168.1.15:3001/api/${url}`,
           method,
           headers,
           data,

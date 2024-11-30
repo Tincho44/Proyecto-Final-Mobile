@@ -13,13 +13,15 @@ const ProfileScreen = () => {
   const { getUserProfile } = useUserService();
   const userId = useLocalSearchParams().userId;
   const { user: userLog } = useAuth();
-  
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [isFriend, setIsFriend] = useState(false); // Se asegura que el estado de isFriend esté correctamente actualizado.
+  const [isFriend, setIsFriend] = useState(false); 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const isOwnProfile = userId == "undefined" || userId == undefined || userId === userLog._id; // Verifica si es el perfil del usuario logueado.
+  if (!userLog) {
+    return <ActivityIndicator size="large" style={styles.loadingIndicator} />;
+  }
+  const isOwnProfile = userId == "undefined" || userId == undefined || userId === userLog._id; 
 
   const fetchUserData = async () => {
     setLoading(true);
@@ -40,14 +42,13 @@ const ProfileScreen = () => {
 
   useEffect(() => {
     fetchUserData();
-  }, []); // Este useEffect solo se ejecuta cuando se carga el componente.
+  }, []); 
 
   useEffect(() => {
     if (userData && userLog && userData.user && userData.user.friends) {
-      // Verifica si el usuario logueado es amigo del perfil consultado.
       setIsFriend(userData.user.friends.some(friend => friend._id === userLog._id));
     }
-  }, [userData, userLog]); // Dependencias actualizadas para que se ejecute al cambiar userData o userLog.
+  }, [userData, userLog]); 
 
   const toggleModal = () => {
     setIsModalOpen(!isModalOpen);
@@ -56,7 +57,7 @@ const ProfileScreen = () => {
   const handleAddFriend = async () => {
     try {
       await addFriend(userData.user._id);
-      await fetchUserData(); // Refresca los datos del perfil para reflejar el cambio.
+      await fetchUserData(); 
     } catch (error) {
       console.error("Error al añadir amigo:", error);
       Alert.alert("Error", "No se pudo agregar al amigo.");
@@ -66,7 +67,7 @@ const ProfileScreen = () => {
   const handleRemoveFriend = async () => {
     try {
       await removeFriend(userData.user._id);
-      await fetchUserData(); // Refresca los datos del perfil para reflejar el cambio.
+      await fetchUserData(); 
     } catch (error) {
       console.error("Error al eliminar amigo:", error);
       Alert.alert("Error", "No se pudo eliminar al amigo.");

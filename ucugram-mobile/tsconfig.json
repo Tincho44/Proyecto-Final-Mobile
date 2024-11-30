@@ -18,5 +18,5 @@
     "hooks/useApi.jsx",
     "services/UserService.jsx",
     "app/_layout.jsx"
-, "app/+not-found.jsx", "hooks/useAuth.ls", "context/AuthContext.jsx", "app/+html.jsx", "services/feedService.jsx", "services/AuthService.jsx", "app/(tabs)/feed.jsx"  ]
+, "app/+not-found.jsx", "hooks/useAuth.js", "context/AuthContext.jsx", "app/+html.jsx", "services/feedService.jsx", "services/AuthService.jsx", "app/(tabs)/feed.jsx", "components/Post.jsx"  ]
 }
