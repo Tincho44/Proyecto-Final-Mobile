@@ -10,7 +10,7 @@ import  ChangePicture from "@/components/profile/ChangePicture";
 import ChangeDescription from "@/components/profile/ChangeDescription"
 
 const ProfileScreen = () => {
-  const { getUserProfile } = useUserService();
+  const { getUserProfile, addFriend, removeFriend } = useUserService();
   const userId = useLocalSearchParams().userId;
   const { user: userLog } = useAuth();
   const [userData, setUserData] = useState(null);
@@ -54,6 +54,7 @@ const ProfileScreen = () => {
     setIsModalOpen(!isModalOpen);
   };
 
+  
   const handleAddFriend = async () => {
     try {
       await addFriend(userData.user._id);
