@@ -3,11 +3,11 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } fro
 import * as ImagePicker from "expo-image-picker";
 import { useToast } from "react-native-toast-notifications"; 
 import usePostService from '../../services/PostService';
-
+import Toast from 'react-native-toast-message';
 const CreatePostPage = () => {
   const [imageUri, setImageUri] = useState(null);
   const [caption, setCaption] = useState("");
-  const { uploadPost } = usePostService()
+  const { uploadPost } = usePostService();
   const toast = useToast();
 
   const handlePickImage = async () => {
@@ -38,10 +38,12 @@ const CreatePostPage = () => {
     }
 
     try {
+      // Crear un objeto FormData para subir la imagen a Cloudinary
       const data = new FormData();
-      data.append("file", imageUri);
+      data.append('file', imageUri);
       data.append("upload_preset", "unsigned_preset"); // Cambiar por tu preset de Cloudinary
 
+      // Subir la imagen a Cloudinary
       const cloudinaryResponse = await fetch("https://api.cloudinary.com/v1_1/ddukhiy9y/image/upload", {
         method: "POST",
         body: data,
@@ -51,11 +53,19 @@ const CreatePostPage = () => {
 
       if (cloudinaryResponse.ok && cloudinaryResult.secure_url) {
         const imageUrl = cloudinaryResult.secure_url;
-        await uploadPost(caption, imageUrl); 
+
+        const imageResponse = await fetch(imageUrl);
+        const imageBlob = await imageResponse.blob();
+
+        const imageName = imageUri.split('/').pop() || 'image.jpg';
+        const file = new File([imageBlob], imageName, { type: imageBlob.type });
+
+        await uploadPost(caption, file);
+
         setImageUri(null);
         setCaption("");
       } else {
-        console.error("Cloudinary upload error:", cloudinaryResult);
+        console.error("Error al subir la imagen a Cloudinary:", cloudinaryResult);
       }
     } catch (error) {
       console.error("Error al crear la publicación:", error);
