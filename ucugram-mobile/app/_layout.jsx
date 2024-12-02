@@ -1,14 +1,38 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
 import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
+import { Stack, useSegments, Redirect, useRouter } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { useEffect } from 'react';
 import 'react-native-reanimated';
 
+import { useAuth } from '@/hooks/useAuth';
 import { useColorScheme } from '@/hooks/useColorScheme';
+import { AuthProvider } from '@/context/AuthContext';
+import {PostProvider} from '@/context/PostContext';
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
+
+function RootLayoutNav() {
+  const router = useRouter();
+  const { user, loading } = useAuth();
+  const segments = useSegments();
+  const inAuthGroup = segments[0] === '(auth)';
+
+  useEffect(() => {
+    if (!loading) {
+      if (!user && !inAuthGroup) {
+        router.replace("/login");
+      } else if (user && inAuthGroup) {
+        router.replace("/(tabs)");
+      }
+    }
+  }, [loading, user, inAuthGroup, router]);
+
+  if (loading) {
+    return null;
+  }
+  return <Stack />;
+}
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
@@ -27,11 +51,12 @@ export default function RootLayout() {
   }
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="+not-found" />
-      </Stack>
-    </ThemeProvider>
+    <AuthProvider>
+      <PostProvider>
+      <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+        <RootLayoutNav />
+      </ThemeProvider>
+      </PostProvider>
+    </AuthProvider>
   );
 }
